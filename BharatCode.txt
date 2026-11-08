@@ -1,0 +1,4 @@
+BharatCode Build League 2026
+Project: VidyaAI — AI Study Companion for Indian Competitive-Exam Students
+Built by: Ankush Singh
+Stack: Next.js (App Router), TypeScript, Tailwind CSS, Google Gemini API
