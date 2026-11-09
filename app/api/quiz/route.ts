@@ -4,7 +4,7 @@
 // Returns: { questions: [{ question, options[4], answer (0-3), explanation }] }
 
 import { NextResponse } from "next/server";
-import { askGeminiJson } from "@/lib/gemini";
+import { askBharatCodeJson as askGeminiJson } from "@/lib/bharatcode";
 
 export type QuizQuestion = {
   question: string;
