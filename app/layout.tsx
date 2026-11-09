@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
         <footer className="border-t py-6 text-center text-xs text-slate-400">
           VidyaAI — built for the BharatCode Build League 2026 by Ankush Singh.
-          AI answers come from Google Gemini; always verify facts from official sources.
+          AI answers come from the BharatCode model API; always verify facts from official sources.
         </footer>
       </body>
     </html>
