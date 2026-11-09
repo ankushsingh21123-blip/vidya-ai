@@ -12,7 +12,7 @@ what it does, and why.
 - **next.config.js** — Next.js config; only `reactStrictMode: true` (catches
   common React mistakes in dev).
 - **tsconfig.json** — TypeScript settings: `strict: true` (catches type errors),
-  `@/*` path alias so `import ... from "@/lib/gemini"` works, JSX preserved
+  `@/*` path alias so `import ... from "@/lib/bharatcode"` works, JSX preserved
   for Next.js to compile.
 - **tailwind.config.js** — Tailwind setup; `content` lists the folders Tailwind
   scans for class names; extends the palette with `ink` (dark slate) and
@@ -24,15 +24,18 @@ what it does, and why.
 - **.gitignore** — keeps `node_modules`, `.next`, and `.env*` out of git.
 - **BharatCode.txt** — contest marker file in the repo root (required by the rules).
 
-## lib/gemini.ts — the AI wrapper
+## lib/bharatcode.ts — the AI wrapper
 
-- `GEMINI_MODEL = "gemini-1.5-flash"` — Google's fast, free-tier model.
-- `GEMINI_URL` — the REST endpoint for generating content.
-- `askGemini(prompt)` — reads `GEMINI_API_KEY` from the server env (throws a
-  clear error if missing), POSTs `{ contents: [{ parts: [{ text: prompt }] }] }`
-  with temperature 0.7 and a 2048-token cap, checks `res.ok`, and joins the
-  returned text parts into one string.
-- `askGeminiJson<T>(prompt)` — same call, but asks the model to reply with JSON
+- `BHARATCODE_MODEL = "qwen-3.8-27b"` — BharatCode's standard-tier model,
+  free for .ac.in/.edu.in student accounts.
+- `BHARATCODE_URL` — `https://bharatcode.ai/api/model/v1/chat/completions`,
+  the OpenAI-compatible chat-completions endpoint.
+- `askBharatCode(prompt)` — reads `BHARATCODE_API_KEY` from the server env
+  (throws a clear error if missing), POSTs
+  `{ model, messages: [{ role: "user", content: prompt }], temperature: 0.7, max_tokens: 2048 }`
+  with `Authorization: Bearer <key>`, checks `res.ok`, and returns the first
+  choice's message content.
+- `askBharatCodeJson<T>(prompt)` — same call, but asks the model to reply with JSON
   only, then strips any ```json fences before `JSON.parse`. Used by the quiz route.
 - Why REST instead of the SDK: fewer dependencies, and the request/response shape
   is visible in one file — easier to explain in a video.
@@ -56,13 +59,14 @@ what it does, and why.
   structure = simple explanation → one worked example → one practice question,
   and explain concepts rather than just handing over answers.
 - Sends only the last 8 turns as history so the prompt stays small and cheap.
-- Calls `askGemini(prompt)` and returns `{ reply }`; errors become a 500 with a
-  readable message. The API key never leaves the server.
+- Calls `askBharatCode(prompt)` (imported under the local alias `askGemini`)
+  and returns `{ reply }`; errors become a 500 with a readable message.
+  The API key never leaves the server.
 
 ## app/api/quiz/route.ts — POST /api/quiz (quiz generation)
 
 - Reads `{ topic, exam, difficulty }`; 400s if no topic.
-- Prompts Gemini for exactly 5 MCQs with 4 options each, one correct answer,
+- Prompts BharatCode for exactly 5 MCQs with 4 options each, one correct answer,
   plus a one-sentence explanation — as a JSON object.
 - Validates every question (has text, exactly 4 options, answer index 0–3)
   and keeps at most 5; 500s if none survive validation.
@@ -109,8 +113,8 @@ what it does, and why.
 ## Data flow, end to end
 
 1. Student types a question in `/tutor` → `fetch("/api/chat")` → `route.ts`
-   builds the prompt → `askGemini()` → Gemini REST API → reply back to the page.
+   builds the prompt → `askBharatCode()` → BharatCode model API → reply back to the page.
 2. Student types a topic in `/quiz` → `fetch("/api/quiz")` → `route.ts` asks
-   Gemini for JSON → validated questions → page renders them one by one →
+   BharatCode for JSON → validated questions → page renders them one by one →
    score saved to localStorage → dashboard reads it on next visit.
-3. The API key is only ever read inside `lib/gemini.ts` on the server.
+3. The API key is only ever read inside `lib/bharatcode.ts` on the server.

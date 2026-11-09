@@ -3,7 +3,7 @@
 Built for the **BharatCode Build League 2026** by **Ankush Singh**.
 
 VidyaAI helps students preparing for UPSC, SSC, Banking, NEET, JEE and State PSC exams:
-- **AI Tutor** — chat with a Gemini-powered tutor that explains any concept simply,
+- **AI Tutor** — chat with a BharatCode-powered tutor that explains any concept simply,
   shows one worked example, and asks a practice question.
 - **Quiz Generator** — type any topic and get a 5-question MCQ quiz (easy / medium / hard),
   with every answer explained and your score saved.
@@ -12,10 +12,10 @@ VidyaAI helps students preparing for UPSC, SSC, Banking, NEET, JEE and State PSC
 
 ## Stack
 
-Next.js 14 (App Router) + TypeScript + Tailwind CSS. AI via the Google Gemini API
-(`gemini-1.5-flash`, free tier). No SDK — the app calls the Gemini REST API with `fetch`,
-so there is one less dependency to break. The API key lives only on the server
-(env var), never in the browser and never in the code.
+Next.js 14 (App Router) + TypeScript + Tailwind CSS. AI via the BharatCode model API
+(`qwen-3.8-27b`, standard tier, free for .ac.in/.edu.in students). No SDK — the app
+calls the BharatCode REST API with `fetch`, so there is one less dependency to break.
+The API key lives only on the server (env var), never in the browser and never in the code.
 
 ## Run it locally
 
@@ -23,9 +23,9 @@ so there is one less dependency to break. The API key lives only on the server
 # 1. Install dependencies
 npm install
 
-# 2. Get a free Gemini API key at https://aistudio.google.com/app/apikey
+# 2. Get a free BharatCode API key at https://bharatcode.ai (free for .ac.in/.edu.in students)
 cp .env.example .env.local
-# open .env.local and paste your key after GEMINI_API_KEY=
+# open .env.local and paste your key after BHARATCODE_API_KEY=
 
 # 3. Start the dev server
 npm run dev
@@ -44,15 +44,15 @@ npm start
 - `app/page.tsx` — dashboard (streak, quiz stats, exam links).
 - `app/tutor/page.tsx` — chat UI, calls `POST /api/chat`.
 - `app/quiz/page.tsx` — quiz UI, calls `POST /api/quiz`, scores answers, saves results.
-- `app/api/chat/route.ts` — server route: builds a tutor prompt (last 8 turns) and calls Gemini.
-- `app/api/quiz/route.ts` — server route: asks Gemini for 5 MCQs as JSON and validates them.
-- `lib/gemini.ts` — `askGemini()` / `askGeminiJson()` REST wrapper.
+- `app/api/chat/route.ts` — server route: builds a tutor prompt (last 8 turns) and calls BharatCode.
+- `app/api/quiz/route.ts` — server route: asks BharatCode for 5 MCQs as JSON and validates them.
+- `lib/bharatcode.ts` — `askBharatCode()` / `askBharatCodeJson()` REST wrapper.
 - `lib/storage.ts` — localStorage helpers for quiz results and study streak.
 
 See **EXPLAIN.md** for a line-by-line explanation of every file — useful for the
 5-minute demo video and interviews.
 
-## Push to GitHub (do this yourself — no GitHub login is available in this workspace)
+## Push to GitHub
 
 ```bash
 cd ~/workspace/bharatcode-build-league   # or wherever you copied this folder
@@ -81,7 +81,7 @@ Winning does **not** guarantee the internship — there is a separate interview.
 
 - No users, traction, or revenue are claimed for this project. It is a working
   prototype built for the contest.
-- The tutor and quiz need a Gemini API key to work; without one the API routes
-  return a clear error telling you to set `GEMINI_API_KEY`.
+- The tutor and quiz need a BharatCode API key to work; without one the API routes
+  return a clear error telling you to set `BHARATCODE_API_KEY`.
 - AI answers can be wrong — the footer reminds students to verify facts from
   official sources.
