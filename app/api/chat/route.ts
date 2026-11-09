@@ -5,7 +5,7 @@
 // a worked example, then a practice question for the student.
 
 import { NextResponse } from "next/server";
-import { askGemini } from "@/lib/gemini";
+import { askBharatCode as askGemini } from "@/lib/bharatcode";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
 
