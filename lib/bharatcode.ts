@@ -20,8 +20,16 @@
 //   Signup: https://bharatcode.ai — free for .ac.in / .edu.in students
 const BHARATCODE_MODEL =
   process.env.BHARATCODE_MODEL ?? "qwen-3.8-27b";
-const BHARATCODE_URL =
-  "https://bharatcode.ai/api/model/v1/chat/completions";
+// Mock mode is explicit and opt-in (BHARATCODE_MOCK=1). Only then is the
+// endpoint read from BHARATCODE_URL, and only the literal placeholder key
+// "mock" is sent - a real BHARATCODE_API_KEY can never be redirected to a
+// non-default URL. Production never sets BHARATCODE_MOCK, so live
+// deployments always use the real BharatCode endpoint and the real key.
+const BHARATCODE_MOCK = process.env.BHARATCODE_MOCK === "1";
+const BHARATCODE_URL = BHARATCODE_MOCK
+  ? (process.env.BHARATCODE_URL ??
+    "http://127.0.0.1:4310/api/model/v1/chat/completions")
+  : "https://bharatcode.ai/api/model/v1/chat/completions";
 
 type ChatChoice = {
   message?: { content?: string | null };
@@ -34,7 +42,7 @@ type ChatResponse = {
 
 /** Send a prompt to BharatCode and return the model's plain-text reply. */
 export async function askBharatCode(prompt: string): Promise<string> {
-  const apiKey = process.env.BHARATCODE_API_KEY;
+  const apiKey = BHARATCODE_MOCK ? "mock" : process.env.BHARATCODE_API_KEY;
   if (!apiKey) {
     throw new Error(
       "BHARATCODE_API_KEY is not set. Sign up at https://bharatcode.ai (free for .ac.in / .edu.in students), copy .env.example to .env.local and add your key."
@@ -80,4 +88,4 @@ export async function askBharatCodeJson<T>(prompt: string): Promise<T> {
     .replace(/\s*```$/i, "")
     .trim();
   return JSON.parse(cleaned) as T;
-}
+  }
