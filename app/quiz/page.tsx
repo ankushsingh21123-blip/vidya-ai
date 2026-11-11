@@ -57,13 +57,12 @@ export default function QuizPage() {
       setIndex(index + 1);
       setPicked(null);
     } else {
-      // score state has not updated yet for this last answer, so add it here.
-      const finalScore = score + (picked === questions[index].answer ? 1 : 0);
-      setScore(finalScore);
+      // The last answer was already counted by answer() in its own click
+      // event, so `score` is final here. (Adding it again produced 6/5.)
       setFinished(true);
       saveResult({
         topic: topic.trim(),
-        score: finalScore,
+        score,
         total: questions.length,
         date: new Date().toISOString(),
       });
@@ -171,4 +170,4 @@ export default function QuizPage() {
       )}
     </div>
   );
-}
+  }
