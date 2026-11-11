@@ -5,3 +5,8 @@ out/
 .env.local
 *.log
 .DS_Store
+
+# test artifacts
+shots/
+test-results/
+playwright-report/
